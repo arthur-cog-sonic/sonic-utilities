@@ -10,8 +10,8 @@ resources:
   repositories:
   - repository: sonic-swss
     type: github
-    name: sonic-net/sonic-swss
-    endpoint: sonic-net
+    name: arthur-cog-sonic/sonic-swss
+    endpoint: arthur-cog-sonic
 
 variables:
   - name: BUILD_BRANCH
@@ -27,7 +27,7 @@ stages:
     displayName: "Static Analysis"
     timeoutInMinutes: 10
     continueOnError: true
-    pool: sonic-ubuntu-1c
+    pool: sonic-build
     steps:
     - template: .azure-pipelines/pre-commit-check.yml
 
@@ -106,25 +106,26 @@ stages:
       displayName: 'Install swss-common dependencies'
 
 
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        source: specific
-        project: build
-        pipeline: sonic-net.sonic-dash-api
-        artifact: sonic-dash-api
-        runVersion: 'latestFromBranch'
-        runBranch: 'refs/heads/$(BUILD_BRANCH)'
-        path: $(Build.ArtifactStagingDirectory)/download
-        patterns: |
-          libdashapi*.deb
-      displayName: "Download dash api"
-
-    - script: |
-        set -xe
-        sudo apt-get update
-        sudo dpkg -i $(Build.ArtifactStagingDirectory)/download/libdashapi_*.deb
-      workingDirectory: $(Pipeline.Workspace)/
-      displayName: 'Install libdashapi libraries'
+    # External pipeline download commented out - pipeline not available in Cisco-SONiC-PoC org
+    # - task: DownloadPipelineArtifact@2
+    #   inputs:
+    #     source: specific
+    #     project: build
+    #     pipeline: sonic-net.sonic-dash-api
+    #     artifact: sonic-dash-api
+    #     runVersion: 'latestFromBranch'
+    #     runBranch: 'refs/heads/$(BUILD_BRANCH)'
+    #     path: $(Build.ArtifactStagingDirectory)/download
+    #     patterns: |
+    #       libdashapi*.deb
+    #   displayName: "Download dash api"
+    #
+    # - script: |
+    #     set -xe
+    #     sudo apt-get update
+    #     sudo dpkg -i $(Build.ArtifactStagingDirectory)/download/libdashapi_*.deb
+    #   workingDirectory: $(Pipeline.Workspace)/
+    #   displayName: 'Install libdashapi libraries'
 
     - script: |
         set -xe
